@@ -1,0 +1,8 @@
+#pragma once
+
+namespace NEvenFound::NConfig {
+
+static constexpr const char* CPrivateKeysDir = "@EF_KEYS_DIR@";
+static constexpr const char* CPublicKeysDir = "@EF_PUBKEYS_DIR@";
+
+}   // namespace NEvenFound::NConfig
