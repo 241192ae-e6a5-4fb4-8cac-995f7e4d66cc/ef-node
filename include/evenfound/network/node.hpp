@@ -2,6 +2,7 @@
 
 #include <evenfound/crypto/rsa.hpp>
 #include <evenfound/network/session.hpp>
+#include <evenfound/network/client.hpp>
 #include <evenfound/message/message_handler.hpp>
 
 
@@ -53,6 +54,9 @@ public: /* */
 };
 
 
+/**
+ *
+ */
 template <class T, class ... TMessages>
 class TNodeSession 
     : public TNodeSessionBase
@@ -66,6 +70,50 @@ class TNodeSession
 
     void OnBadMessage(/* error code */) {
         Close();
+    }
+};
+
+
+
+/**
+ *
+ */
+class TNodeClient 
+    : public NNetwork::TTcpClient
+{
+    TRsaPrivateKey  PrivateKey;
+
+    TRsaPublicKey   PublicKey;
+
+public:
+    using NNetwork::TTcpClient::TTcpClient;
+
+    void OnClientConnected();
+
+    void OnClientRead(const TBuffer& buffer);
+
+    void OnClientWritten(size_t size);
+
+    void OnClientError(const boost::system::error_code& error);
+
+    void OnClientClosed();
+
+    void SendMessage(const TBuffer& buffer);
+
+    template <class TMessage, typename ... Args>
+    void SendMessage(Args&& ... args) {
+        IMessagePtr Message = MakeMessage<TMessage>(std::forward<Args>(args)...);
+        TBuffer Buffer;
+        Message->Store(Buffer);
+        SendMessage(Buffer);
+    }
+
+    void SetRsaPublicKey(const TRsaPublicKey& key) {
+        PublicKey = key;
+    }
+
+    void SetRsaPrivateKey(const TRsaPrivateKey& key) {
+        PrivateKey = key;
     }
 };
 

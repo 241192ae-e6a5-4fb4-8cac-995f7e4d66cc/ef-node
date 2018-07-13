@@ -1,5 +1,6 @@
 #include <evenfound/network/session.hpp>
 
+#include <iostream>
 
 namespace NEvenFound::NNetwork {
 
@@ -33,26 +34,25 @@ void TSession::Close() {
 
 //--------------------------------------------------------------------------------------------------------------------
 void TSession::InternalOnRead(const boost::system::error_code &error, size_t size) {
-    ((void)size);
-
     if (error) {
-        this->OnError(error);
+        OnError(error);
         return;
     }
 
     RxBuffer.Resize(size);
-    this->OnRead(RxBuffer);
+
+    OnRead(RxBuffer);
 }
 
 
 //--------------------------------------------------------------------------------------------------------------------
 void TSession::InternalOnWritten(const boost::system::error_code &error, size_t size) {
     if (error) {
-        this->OnError(error);
+        OnError(error);
         return;
     }
 
-    this->OnWritten(size);
+    OnWritten(size);
 }
 
 

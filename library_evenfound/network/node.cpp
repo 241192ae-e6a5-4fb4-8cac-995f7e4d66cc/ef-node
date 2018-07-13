@@ -1,4 +1,3 @@
-
 #include <evenfound/serialization.hpp>
 #include <evenfound/crypto/signature.hpp>
 #include <evenfound/crypto/algorithm.hpp>
@@ -19,7 +18,8 @@ void TNodeSessionBase::OnRead(const TBuffer &buffer) {
     size_t SignatureSize = 0;
 
     NSerialization::TTypeSerializer<size_t>::Load(buffer.Data(), 0, SignatureSize);
-    if (SignatureSize > buffer.Size() - sizeof(size_t)) {
+
+    if (buffer.Size() < (SignatureSize + sizeof(size_t))) {
         OnBadMessage();
         return;
     }
@@ -68,5 +68,35 @@ void TNodeSessionBase::OnClosed() {
 void TNodeSessionBase::SendMessage(const TBuffer& buffer) {
     ((void)buffer);
 }
+
+
+//====================================================================================================================
+//  TNodeClient
+//
+
+void TNodeClient::OnClientConnected() {
+
+}
+
+void TNodeClient::OnClientRead(const TBuffer& buffer) {
+    ((void)buffer);
+}
+
+void TNodeClient::OnClientWritten(size_t size) {
+    ((void)size);
+}
+
+void TNodeClient::OnClientError(const boost::system::error_code& error) {
+    ((void)error);
+}
+
+void TNodeClient::OnClientClosed() {
+    
+}
+
+void TNodeClient::SendMessage(const TBuffer& buffer) {
+    ((void)buffer);
+}
+
 
 }   // namespace TEvenFound

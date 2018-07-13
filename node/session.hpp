@@ -43,6 +43,10 @@ public:
         std::cerr << "NODE SHUTDOWN" << std::endl;
         kill(0, SIGTERM);
     }
+
+    void OnBadMessage() {
+        std::cerr << "NODE RX BAD MESSAGE" << std::endl;
+    }
 };
 
 
