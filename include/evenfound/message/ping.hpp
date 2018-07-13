@@ -12,6 +12,8 @@ struct TPingMsg
 
     std::string Payload;
 
+    TPingMsg() { }
+
     TPingMsg(const std::string& payload)
         : Payload(payload)
     { }

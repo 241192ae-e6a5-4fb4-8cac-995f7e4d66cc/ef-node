@@ -12,6 +12,8 @@ struct TTextMsg
 
     std::string Payload;
 
+    TTextMsg() { }
+
     TTextMsg(const std::string& payload)
         : Payload(payload)
     { }

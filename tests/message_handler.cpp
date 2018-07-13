@@ -5,7 +5,7 @@
 #include <evenfound/message/text.hpp>
 
 
-TEST(TMessageHandler, OneMessage) {
+TEST(TMessageHandler, OneKnownMessage) {
     struct THandler : public NEvenFound::TMessageHandler<THandler, NEvenFound::NMessage::TPingMsg> {
         uint64_t MessageType { 0 };
         void OnMessage(const NEvenFound::NMessage::TPingMsg &message) {
@@ -52,4 +52,44 @@ TEST(TMessageHandler, Unexpected) {
 
     EXPECT_EQ(Handler.MessageType, NEvenFound::NMessage::TPingMsg::CMessageType);
     EXPECT_EQ(Handler.UnexpectedCount, 2);
+}
+
+TEST(TMessageHandler, TwoKnownMessages) {
+    struct THandler 
+        : public NEvenFound::TMessageHandler<
+            THandler,
+            NEvenFound::NMessage::TPingMsg,
+            NEvenFound::NMessage::TPongMsg>
+    {
+        uint64_t MessageType { 0 };
+        uint64_t UnexpectedCount { 0 };
+
+        void OnMessage(const NEvenFound::NMessage::TPingMsg &message) {
+            MessageType = message.GetMessageId();    
+        }
+
+        void OnMessage(const NEvenFound::NMessage::TPongMsg &message) {
+            MessageType = message.GetMessageId();    
+        }
+
+        bool OnUnknownMessage(NEvenFound::IMessagePtr) {
+            UnexpectedCount += 1;
+            return false;
+        }
+    };
+
+    std::vector<NEvenFound::IMessagePtr> Messages {
+        NEvenFound::MakeMessage<NEvenFound::NMessage::TPingMsg>("Hello world!"),
+        NEvenFound::MakeMessage<NEvenFound::NMessage::TPongMsg>("Hello world!"),
+        NEvenFound::MakeMessage<NEvenFound::NMessage::TTextMsg>("Hello world!"),
+    };
+
+    THandler Handler;
+
+    for (const NEvenFound::IMessagePtr &Message : Messages) {
+        Handler.HandleMessage(Message);
+    }
+
+    EXPECT_EQ(Handler.MessageType, NEvenFound::NMessage::TPongMsg::CMessageType);
+    EXPECT_EQ(Handler.UnexpectedCount, 1);
 }
