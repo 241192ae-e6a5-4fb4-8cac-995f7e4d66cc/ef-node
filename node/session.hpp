@@ -41,7 +41,7 @@ public:
 
     void OnMessage(const NEvenFound::NMessage::TShutdownMsg&) {
         std::cerr << "NODE SHUTDOWN" << std::endl;
-        kill(0, SIGTERM);
+        kill(0, SIGINT);
     }
 
     void OnBadMessage() {

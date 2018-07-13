@@ -23,7 +23,6 @@ void TTcpServer::Run(uint16_t port) {
     //  configure singal handling
     //
     SignalSet.add(SIGINT);
-    SignalSet.add(SIGTERM);
     SignalSet.async_wait(std::bind(&TTcpServer::OnSignal, this, std::placeholders::_1, std::placeholders::_2));
 
     //

@@ -1,8 +1,10 @@
 #!/usr/bin/bash
 
-@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@NODE_EXECUTABLE@ \
+[ "$1" == "debug" ] && GDB_BIN="gdb --args"
+
+$GDB_BIN @CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@NODE_EXECUTABLE@ \
     -p 42002 \
     --private-key @EF_KEYS_DIR@/beta.key \
     --public-key  @EF_PUBKEYS_DIR@/alpha_pub.key \
-    --remote-addr localhost \
+    --remote-addr "127.0.0.1" \
     --remote-port 42001

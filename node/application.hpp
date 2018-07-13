@@ -1,6 +1,7 @@
 #pragma once
 
 #include <evenfound/network/server.hpp>
+#include <evenfound/network/node.hpp>
 #include <evenfound/crypto/rsa.hpp>
 
 #include "settings.hpp"
@@ -10,13 +11,17 @@
 class TNodeApplication
     : public NEvenFound::NNetwork::ITcpServerCallback
     , public NEvenFound::NNetwork::ISessionFactory
+    , public NEvenFound::INodeClientCallback
+    , public std::enable_shared_from_this<TNodeApplication>
 {
-    NEvenFound::TRsaPrivateKey  MyPrivateKey;
+    NEvenFound::TRsaPrivateKey      MyPrivateKey;
 
-    NEvenFound::TRsaPublicKey   OtherPublicKey;
+    NEvenFound::TRsaPublicKey       OtherPublicKey;
+
+    std::shared_ptr<NEvenFound::TNodeClient>    NodeClient;
 
 public:
-    TNodeSettings               Settings;    
+    TNodeSettings   Settings;    
 
     TNodeApplication(int argc, char **argv)
         : Settings(argc, argv)
@@ -47,10 +52,51 @@ public:
             std::cerr << "NODE ERROR " << err.what() << std::endl;
             server->Stop();
         }
+
+        //
+        //  Create connection to remote node
+        //
+        NodeClient = std::make_shared<NEvenFound::TNodeClient>(server->GetContext());
+        NodeClient->SetRsaPrivateKey(MyPrivateKey);
+        NodeClient->SetRsaPublicKey(OtherPublicKey);
+        NodeClient->SetCallback(shared_from_this());
+        NodeClient->AsyncConnect(Settings.RemoteAddress, Settings.RemotePort);
     }
 
 
     void OnStopped(NEvenFound::NNetwork::ITcpServerPtr) {
         std::cout << "NODE STOPPED" << std::endl;
+    }
+
+    void OnNodeConnected() {
+        std::cout << "NODE CONNECTED" << std::endl;
+        NodeClient->SendMessage<NEvenFound::NMessage::TTextMsg>("Hello world!");
+    }
+
+    void OnNodeConnectionError() {
+        std::cout << "NODE CONNECTION ERROR" << std::endl;
+    }
+
+    void OnNodeDisconnected() {
+        std::cout << "NODE DISCONNECTED" << std::endl;
+    }
+
+    uint64_t SentMessages { 0 };
+
+    void OnNodeMessageSent() {
+        std::cout << "NODE MESSAGE SENT" << std::endl;
+
+        SentMessages += 1;
+        if (SentMessages == 10) {
+            NodeClient->SendMessage<NEvenFound::NMessage::TShutdownMsg>();
+        } else if (SentMessages > 10) {
+            NodeClient->Close();
+        } else {
+            NodeClient->SendMessage<NEvenFound::NMessage::TTextMsg>("ping");
+        }
+    }
+
+    void OnNodeError() {
+
     }
 };

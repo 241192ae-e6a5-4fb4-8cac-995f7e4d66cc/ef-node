@@ -74,6 +74,25 @@ class TNodeSession
 };
 
 
+/**
+ *
+ */
+struct INodeClientCallback {
+    virtual ~INodeClientCallback() { }
+
+    virtual void OnNodeConnected() = 0;
+
+    virtual void OnNodeDisconnected() = 0;
+
+    virtual void OnNodeMessageSent() = 0;
+    
+    virtual void OnNodeConnectionError() = 0;
+
+    virtual void OnNodeError() = 0;
+};
+
+using INodeClientCallbackPtr = std::shared_ptr<INodeClientCallback>;
+
 
 /**
  *
@@ -81,9 +100,11 @@ class TNodeSession
 class TNodeClient 
     : public NNetwork::TTcpClient
 {
-    TRsaPrivateKey  PrivateKey;
+    TRsaPrivateKey          PrivateKey;
 
-    TRsaPublicKey   PublicKey;
+    TRsaPublicKey           PublicKey;
+
+    INodeClientCallbackPtr  Callback;
 
 public:
     using NNetwork::TTcpClient::TTcpClient;
@@ -114,6 +135,10 @@ public:
 
     void SetRsaPrivateKey(const TRsaPrivateKey& key) {
         PrivateKey = key;
+    }
+
+    void SetCallback(INodeClientCallbackPtr callback) {
+        Callback = callback;
     }
 };
 

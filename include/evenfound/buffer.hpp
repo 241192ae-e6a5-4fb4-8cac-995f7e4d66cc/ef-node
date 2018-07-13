@@ -56,7 +56,7 @@ struct TTypeInfo<::NEvenFound::TBuffer> {
     static constexpr bool ConstantSize = false;
 
     static size_t Size(const TBuffer &v) {
-        return TTypeInfo<size_t>::Size() + v.Size();
+        return v.Size() + sizeof(size_t);
     }
 };
 

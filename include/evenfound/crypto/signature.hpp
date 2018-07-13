@@ -3,6 +3,7 @@
 #include <evenfound/buffer.hpp>
 #include <evenfound/crypto/rsa.hpp>
 #include <evenfound/serialization.hpp>
+#include <iostream>
 
 
 namespace NEvenFound {
@@ -63,6 +64,21 @@ public:
 };
 
 
+namespace NMeta {
+
+template <typename T>
+struct TTypeInfo<::NEvenFound::TSignature<T>> {
+    static constexpr bool ConstantSize = false;
+
+    static size_t Size(const TSignature<T> &v) {
+        //std::cerr << "TYPEINFO TSIGNATURE SIZE " << TTypeInfo<TBuffer>::Size(v.Signature()) << std::endl;
+        return TTypeInfo<TBuffer>::Size(v.Signature());
+    }
+};
+
+}   // namespace NMeta
+
+
 namespace NSerialization {
 
 template <typename THashAlgorithm>
@@ -71,6 +87,7 @@ struct TTypeSerializer<TSignature<THashAlgorithm>> {
      *
      */
     static size_t Store(uint8_t *dest, size_t offset, const TSignature<THashAlgorithm>& src) {
+        //std::cerr << "SIGNATURE STORE " << (void*)dest << " OFFSET " << offset << std::endl;
         return TTypeSerializer<TBuffer>::Store(dest, offset, src.Signature());
     }
 
@@ -78,6 +95,7 @@ struct TTypeSerializer<TSignature<THashAlgorithm>> {
      *
      */
     static size_t Load(const uint8_t *src, size_t offset, TSignature<THashAlgorithm>& dest) {
+        //std::cerr << "SIGNATURE LOAD " << (void*)src << " OFFSET " << offset << std::endl;
         return TTypeSerializer<TBuffer>::Load(src, offset, dest.Signature());
     }
 };

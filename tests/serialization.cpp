@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <evenfound/serialization.hpp>
-#include <evenfound/serialization/string.hpp>
-#include <evenfound/serialization/vector.hpp>
+#include <evenfound/crypto/signature.hpp>
+#include <evenfound/crypto/algorithm.hpp>
 
 #include <evenfound/message/ping.hpp>
 
@@ -77,4 +77,23 @@ TEST(Serialization, Message) {
 
     EXPECT_EQ(RestoredMessage.MessageId, OriginalMessage.MessageId);
     EXPECT_EQ(RestoredMessage.Payload, OriginalMessage.Payload);
+}
+
+TEST(Serialization, TBuffer) {
+    NEvenFound::TBuffer buffer;
+    NEvenFound::TBuffer OriginalPayload0 { 0x00, 0x11, 0x22, 0x33 };
+    NEvenFound::TBuffer OriginalPayload1 { 0x55, 0x11, 0x22, 0x33 };
+    NEvenFound::TBuffer OriginalPayload2 { 0x55, 0x11, 0x22, 0x33, 10, 12, 13};
+    NEvenFound::TBuffer OriginalPayload3 { 0x55, 0x11, 0x22, 0x33, 10, 12, 13};
+    NEvenFound::TBuffer RestoredPayload0;
+    NEvenFound::TBuffer RestoredPayload1;
+    NEvenFound::TBuffer RestoredPayload2;
+    NEvenFound::TBuffer RestoredPayload3;
+    
+    NSerialization::Store(buffer, OriginalPayload0, OriginalPayload1, OriginalPayload2, OriginalPayload3);
+    NSerialization::Load(buffer, RestoredPayload0, RestoredPayload1, RestoredPayload2, RestoredPayload3);
+
+    EXPECT_EQ(RestoredPayload0.Size(), OriginalPayload0.Size());
+    EXPECT_EQ(RestoredPayload1.Size(), OriginalPayload1.Size());
+    EXPECT_EQ(RestoredPayload2.Size(), OriginalPayload2.Size());
 }

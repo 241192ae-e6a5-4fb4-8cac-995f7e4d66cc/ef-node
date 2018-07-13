@@ -64,6 +64,9 @@ public:
 
     void Close();
 
+    bool IsConnected() const {
+        return Socket.is_open();
+    }
 private:
     void InternalOnClientConnected(const boost::system::error_code &error);
 
