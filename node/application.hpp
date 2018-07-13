@@ -99,4 +99,15 @@ public:
     void OnNodeError() {
 
     }
+
+    int Run() {
+        try {
+            auto App = shared_from_this();
+            NEvenFound::NNetwork::TTcpServerPtr Server = std::make_shared<NEvenFound::NNetwork::TTcpServer>(App, App);
+            Server->Run(Settings.Port);
+        } catch (const std::exception& error) {
+            return 1;
+        }
+        return 0;
+    }
 };

@@ -24,4 +24,8 @@ MACRO(EF_ADD_TEST testname)
         ${GTEST_LIBRARY}
         ${GTEST_MAIN_LIBRARY}
     )
+    ADD_TEST(
+        NAME    ${testname}
+        COMMAND $<TARGET_FILE:test_${testname}>
+    )
 ENDMACRO(EF_ADD_TEST)
