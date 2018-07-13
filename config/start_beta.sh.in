@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@NODE_EXECUTABLE@ \
+    -p 42002 \
+    --private-key @EF_KEYS_DIR@/beta.key \
+    --public-key  @EF_PUBKEYS_DIR@/alpha_pub.key \
+    --remote-addr localhost \
+    --remote-port 42001

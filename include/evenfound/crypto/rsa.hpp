@@ -24,6 +24,8 @@ struct TRsaPrivateKey {
         return TRsaPrivateKey(path);
     }
 
+    TRsaPrivateKey() = default;
+
     TRsaPrivateKey(const TRsaPrivateKey&) = default;
 
 private:
@@ -42,6 +44,8 @@ struct TRsaPublicKey {
     static const TRsaPublicKey LoadFromFile(const std::string &path) {
         return TRsaPublicKey(path);
     }
+
+    TRsaPublicKey() = default;
 
     TRsaPublicKey(const TRsaPublicKey&) = default;
 private:

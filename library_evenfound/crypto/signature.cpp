@@ -1,24 +1,29 @@
 #include <evenfound/crypto/signature.hpp>
+#include <iostream>
 
 
 namespace NEvenFound {
 
 void TSignatureBase::Sign(const TBigInteger &hash, const TRsaPrivateKey& key) {
-    (void)hash;
-    (void)key;
+    TBigInteger SignedHash = PowMod(hash, key.D, key.N);
+    std::string Signature = SignedHash.AsString(16);
+
+    NSerialization::Store(Value, Signature);
 }
 
+
 bool TSignatureBase::Verify(const TBigInteger &hash, const TRsaPublicKey& key) const {
-    TBigInteger S(Value);
+    std::string Signature;
+    NSerialization::Load(Value, Signature);
 
-    (void)hash;
-    (void)key;
+    TBigInteger SignedHash(Signature);
+    TBigInteger RestoredHash = PowMod(SignedHash, key.E, key.N);
 
-    return false;
+    return hash == RestoredHash;
 }
 
 std::string TSignatureBase::String() const {
-    return "";
+    return Value.HexString();
 }
 
 }   // namespace NEvenFound

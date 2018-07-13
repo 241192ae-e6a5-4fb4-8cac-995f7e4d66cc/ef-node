@@ -40,3 +40,6 @@ EF_CREATE_KEYPAIR(beta)
 EF_CREATE_KEYPAIR(test)
 
 CONFIGURE_FILE(config.hpp.in ${EF_GEN_INCLUDE_DIR}/evenfound/config.hpp)
+
+CONFIGURE_FILE(start_alpha.sh.in ${CMAKE_BINARY_DIR}/start_alpha.sh)
+CONFIGURE_FILE(start_beta.sh.in ${CMAKE_BINARY_DIR}/start_beta.sh)

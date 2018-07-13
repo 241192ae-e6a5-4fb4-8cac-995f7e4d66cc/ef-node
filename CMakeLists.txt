@@ -15,6 +15,8 @@ SET(EF_RSA_KEY_LENGTH   1024                                CACHE STRING "RSA ke
 SET(EF_GEN_INCLUDE_DIR  ${CMAKE_BINARY_DIR}/include         CACHE STRING "generated headers include directory")
 
 
+FIND_PACKAGE(Boost COMPONENTS system program_options REQUIRED)
+
 
 #
 #   FIND ALL DEPENDENCIES
@@ -32,6 +34,9 @@ IF(NOT GMP_LIBRARY)
     MESSAGE(FATAL "GMP library is required")
 ENDIF(NOT GMP_LIBRARY)
 
+IF(NOT Boost_LIBRARIES)
+    MESSAGE(FATAL "Boost libraries are required")
+ENDIF(NOT Boost_LIBRARIES)
 
 #
 #   ADD SUBDIRECTORIES
