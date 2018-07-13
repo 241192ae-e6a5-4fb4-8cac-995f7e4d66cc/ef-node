@@ -26,5 +26,6 @@ struct TPingMsg
         NSerialization::Load(buffer, MessageId, Payload);
     }
 };
+EF_REGISTER_MESSAGE(TPingMsg);
 
 };

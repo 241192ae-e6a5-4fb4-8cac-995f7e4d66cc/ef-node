@@ -93,3 +93,20 @@ TEST(TMessageHandler, TwoKnownMessages) {
     EXPECT_EQ(Handler.MessageType, NEvenFound::NMessage::TPongMsg::CMessageType);
     EXPECT_EQ(Handler.UnexpectedCount, 1);
 }
+
+TEST(TMessageHandler, Null) {
+    struct THandler : public NEvenFound::TMessageHandler<THandler, NEvenFound::NMessage::TPingMsg> {
+        uint64_t NullCount { 0 };
+
+        void OnMessage(const NEvenFound::NMessage::TPingMsg&) { }
+
+        bool OnNullMessage() {
+            NullCount += 1;
+            return false;
+        }
+    };
+
+    THandler Handler;
+    Handler.HandleMessage(nullptr);
+    EXPECT_EQ(Handler.NullCount, 1);
+}

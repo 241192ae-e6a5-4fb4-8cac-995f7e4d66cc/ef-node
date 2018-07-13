@@ -41,10 +41,17 @@ struct TMessageHandler
 {
     virtual bool OnUnknownMessage(IMessagePtr) { return false; }
 
+    virtual bool OnNullMessage() { return false; }
+
     bool HandleMessage(IMessagePtr message) {
+        if (!message) {
+            return OnNullMessage();
+        }
+
         if(TMessageHandlerBase<THandler, TMessages...>::HandleMessage(message)) {
             return true;
         }
+
         return OnUnknownMessage(message);
     }
 };

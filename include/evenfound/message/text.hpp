@@ -26,6 +26,7 @@ struct TTextMsg
         NSerialization::Load(buffer, MessageId, Payload);
     }
 };
+EF_REGISTER_MESSAGE(TTextMsg);
 
 
 };
